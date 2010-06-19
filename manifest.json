@@ -1,0 +1,19 @@
+{
+  "name": "Server watch",
+  "version": "1.0",
+  "description": "The first extension that I made.",
+  "icons": {
+ 		"16": "icons/yellow_light.png",
+        "48": "icons/yellow_light.png",
+        "128": "icons/yellow_light.png" 
+  },
+  "browser_action": {
+    "default_icon": "icons/yellow_light.png",
+    "popup": "popup.html"
+  },
+  "permissions": [
+    "http://*/",
+	"notifications"
+  ],
+  "background_page": "background.html"
+}
