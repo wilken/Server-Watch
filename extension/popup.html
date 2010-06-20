@@ -1,0 +1,91 @@
+<style>
+body {
+	min-width:357px;
+	overflow-x:hidden;
+	font-family:sans-serif;
+	font-size: 12px;
+}
+
+#b {
+	float: right;
+}
+#serviceStatus {
+	float: left;
+	font-size: 10px;
+	font-style: italic;
+	position: absolute;
+	bottom:0;
+	color: gray;
+}
+
+#watchedURL {
+	width:330px;
+}
+
+img {
+	height:20px;
+	width: 20px;
+	vertical-align:middle;
+}
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript"></script>
+
+<script>
+function checkService(){
+	if(chrome.extension.getBackgroundPage().isServiceRunning()) {
+		$('#serviceStatus').html("Service running");
+		$('#button').attr("value","Stop service");
+		return true;
+	}else{
+		$('#serviceStatus').html("Service not running");
+		$('#button').attr("value","Start service");
+		return false;
+	}
+}
+
+function toggleService(){
+	if(checkService()) {
+		chrome.extension.getBackgroundPage().lastReadOk=null;
+		chrome.extension.getBackgroundPage().stopService();
+		chrome.browserAction.setIcon({path:"icons/yellow_light.png"});
+		$('#serviceStatus').html("Service not running");
+		$('#button').attr("value","Start service");
+		return false;
+	}else{
+		chrome.extension.getBackgroundPage().startService();
+		$('#serviceStatus').html("Service running");
+		$('#button').attr("value","Stop service");
+		return true;
+	}
+}
+
+function saveUrl(url){
+	localStorage['url']=url;
+	chrome.extension.getBackgroundPage().lastReadOk=null;
+	if(chrome.extension.getBackgroundPage().isServiceRunning()){
+		chrome.extension.getBackgroundPage().stopService();
+		chrome.extension.getBackgroundPage().startService();
+	}
+}
+
+function buttonClicked(){
+	toggleService();
+}
+
+function start(){
+	checkService();
+	$('#watchedURL').attr("value",localStorage['url']);
+}
+$(document).ready(start);
+</script>
+<body>
+	<div id="serverStatus">
+		<img src="icons/yellow_light.png"/>
+		<input id="watchedURL" type="text" value="ff" onchange="saveUrl(this.value)"/>
+	</div>
+	<div id="serviceStatus">Service not running</div>
+	<div id="b">
+		<input id="button" type="button" value="Start service" onclick="buttonClicked()"/>
+	</div>
+</body>
