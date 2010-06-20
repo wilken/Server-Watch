@@ -43,29 +43,45 @@ function checkService(){
 		return false;
 	}
 }
+function stopService() {
+	chrome.extension.getBackgroundPage().lastReadOk=null;
+	chrome.extension.getBackgroundPage().stopService();
+	chrome.browserAction.setIcon({path:"icons/yellow_light.png"});
+	$('#serviceStatus').html("Service not running");
+	$('#button').attr("value","Start service");
+}
+
+function startService() {
+	chrome.extension.getBackgroundPage().startService();
+	$('#serviceStatus').html("Service running");
+	$('#button').attr("value","Stop service");
+}
 
 function toggleService(){
 	if(checkService()) {
-		chrome.extension.getBackgroundPage().lastReadOk=null;
-		chrome.extension.getBackgroundPage().stopService();
-		chrome.browserAction.setIcon({path:"icons/yellow_light.png"});
-		$('#serviceStatus').html("Service not running");
-		$('#button').attr("value","Start service");
+		stopService();
 		return false;
 	}else{
-		chrome.extension.getBackgroundPage().startService();
-		$('#serviceStatus').html("Service running");
-		$('#button').attr("value","Stop service");
+		startService();
 		return true;
 	}
 }
 
-function saveUrl(url){
-	localStorage['url']=url;
-	chrome.extension.getBackgroundPage().lastReadOk=null;
-	if(chrome.extension.getBackgroundPage().isServiceRunning()){
-		chrome.extension.getBackgroundPage().stopService();
-		chrome.extension.getBackgroundPage().startService();
+function saveUrl(input){
+	//Simple check
+	if((input.value+"0000000").substring(0,7)==="http://"){
+		localStorage['url']=input.value;
+		chrome.extension.getBackgroundPage().lastReadOk=null;
+		if(chrome.extension.getBackgroundPage().isServiceRunning()){
+			chrome.extension.getBackgroundPage().stopService();
+			chrome.extension.getBackgroundPage().startService();
+		}
+		$('#button').removeAttr('disabled');
+	} else {
+		stopService();
+		input.value="";
+		$('#button').attr('disabled','disabled');
+		return false;
 	}
 }
 
@@ -82,7 +98,7 @@ $(document).ready(start);
 <body>
 	<div id="serverStatus">
 		<img src="icons/yellow_light.png"/>
-		<input id="watchedURL" type="text" value="ff" onchange="saveUrl(this.value)"/>
+		<input id="watchedURL" type="text" value="" onchange="saveUrl(this)"/>
 	</div>
 	<div id="serviceStatus">Service not running</div>
 	<div id="b">

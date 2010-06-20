@@ -3,12 +3,14 @@
 <script>
 var lastReadOk=null;
 var id=0;
-var interval=5000;
+
+//The check interval. Should be configurable
+var interval=30000;
 var url="http://www.eb.dk/dfgdfg"
 
 function callServer() {
 	$.ajax({
-		type: "HEAD", 
+		type: "GET", 
 		url: 	localStorage['url'],
 		cache: false,
 		success: function(data,status,req) {
