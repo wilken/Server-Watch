@@ -12,31 +12,41 @@ function callServer() {
 		type: "GET", 
 		url: 	localStorage['url'],
 		cache: false,
-		success: function(data,status,req) {
-			if(!lastReadOk){
-				lastReadOk=true;
-				chrome.browserAction.setIcon({path:"icons/green_light.png"});
-				var okNotification = webkitNotifications.createNotification(
-				  'icons/green_light.png',  // icon url - can be relative
-				  localStorage['url'],  // notification title
-				  'Server is running '  // notification body text
-				);
-				showNotification(okNotification);
-			}
-		},
-		error: function(req,status,error) {
-			if(lastReadOk||lastReadOk===null){
-				lastReadOk=false;
-				chrome.browserAction.setIcon({path:"icons/red_light.png"});
-				var errorNotification = webkitNotifications.createNotification(
-				  'icons/red_light.png',  // icon url - can be relative
-				  localStorage['url'],  // notification title
-				  'Server is not running'  // notification body text
-				);
-				showNotification(errorNotification);
+		complete: function(req, status){
+			//Hack to ensure that req.status==0 is interpreted as an error
+			if(status=='success' && req.status!=0){
+				showOk();
+			} else if(status=='error' || req.status==0){
+				showError();
 			}
 		}
 	});
+}
+
+function showOk(){
+	if(!lastReadOk){
+		lastReadOk=true;
+		chrome.browserAction.setIcon({path:"icons/green_light.png"});
+		var okNotification = webkitNotifications.createNotification(
+		  'icons/green_light.png',  // icon url - can be relative
+		  localStorage['url'],  // notification title
+		  'Server is running '  // notification body text
+		);
+		showNotification(okNotification);
+	}
+}
+
+function showError(){
+	if(lastReadOk||lastReadOk===null){
+		lastReadOk=false;
+		chrome.browserAction.setIcon({path:"icons/red_light.png"});
+		var errorNotification = webkitNotifications.createNotification(
+		  'icons/red_light.png',  // icon url - can be relative
+		  localStorage['url'],  // notification title
+		  'Server is not running'  // notification body text
+		);
+		showNotification(errorNotification);
+	}
 }
 
 function showNotification(notification){
