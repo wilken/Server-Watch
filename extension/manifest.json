@@ -1,7 +1,7 @@
 {
   "name": "Server watch",
   "version": "0.9",
-  "description": "This extention monitors an URL and reports on changes.",
+  "description": "This extension monitors an URL and reports on change.",
   "icons": {
  		"16": "icons/yellow_light.png",
         "48": "icons/yellow_light.png",
