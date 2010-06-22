@@ -25,6 +25,7 @@ function callServer() {
 
 function showOk(){
 	if(!lastReadOk){
+		interval=30000;
 		lastReadOk=true;
 		chrome.browserAction.setIcon({path:"icons/green_light.png"});
 		var okNotification = webkitNotifications.createNotification(
@@ -38,6 +39,7 @@ function showOk(){
 
 function showError(){
 	if(lastReadOk||lastReadOk===null){
+		interval=5000;
 		lastReadOk=false;
 		chrome.browserAction.setIcon({path:"icons/red_light.png"});
 		var errorNotification = webkitNotifications.createNotification(
